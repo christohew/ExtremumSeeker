@@ -1,3 +1,5 @@
+within UUV;
+
 model ExtremumSeeker
   parameter Real pi = 3.1415926535 "pi";
   

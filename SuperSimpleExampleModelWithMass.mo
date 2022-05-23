@@ -1,3 +1,5 @@
+within UUV;
+
 model SuperSimpleExampleModelWithMass
   
   parameter Real    rho              =1.0;
@@ -27,17 +29,14 @@ model SuperSimpleExampleModelWithMass
             Real    travel(start=0.0,fixed=true);  
 
 equation
-//  der(x) = (speedFluidDemand-speedFluid);
-//  propulsionForce =controlKP*(speedFluidDemand-speedFluid)+controlKI*x;
-//  propulsionForce = tanhSwitch(trigger=100);
-//der(x) = (speedFluidDemand-speedFluid);
   if (speedFluid >= speedFluidDemand) then
-    propulsionForce                    = tanhSwitch(controlKP*(speedFluidDemand-speedFluid)+controlKI*x);
-//    der(x)                             = 0.01;
+    propulsionForce                    = tanhSwitch(1.0, -1.0, 0.0, controlKP*(speedFluidDemand-speedFluid)+controlKI*x);
+    der(x)                             = 0.0;
   else
-//    der(x)                             = (speedFluidDemand-speedFluid);
+    der(x)                             = (speedFluidDemand-speedFluid);
     propulsionForce                    = controlKP*(speedFluidDemand-speedFluid)+controlKI*x;
   end if;
+  
   der(speedFluid)*mass                 = propulsionForce-dragForce;
   der(travel)                          = speedFluid*propulsionStatus;
   eff_prop*powerDemandProp             = speedFluid*propulsionForce;
@@ -48,11 +47,11 @@ equation
   when(fuel<=0.0) then
     propulsionStatus = 0;
   end when;
-  powerDemandFixed = 10.0;
-//  if(travel > 2000 and travel < 2500) then
-//    powerDemandFixed = 100.0;
-//  else
-//    powerDemandFixed = 10.0;
-//  end if;
+  //powerDemandFixed = 10.0;
+  if(travel > 2000 and travel < 2500) then
+    powerDemandFixed = 100.0;
+  else
+    powerDemandFixed = 10.0;
+  end if;
   
 end SuperSimpleExampleModelWithMass;
