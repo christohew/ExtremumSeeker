@@ -1,0 +1,4 @@
+# Python Byte-compiled / optimised / DLL files
+__pycache__/
+.log
+.DS_Store
