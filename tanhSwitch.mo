@@ -15,5 +15,5 @@ protected
          
 algorithm
 //  t_switch := t_a/(b-t_b) + t_c;
-  y := (switchVal/2)*(1+Modelica.Math.tanh(b*x+t_offset));
+  y := (switchVal/2)*(1+Modelica.Math.tanh(b*x-b*t_offset));
 end tanhSwitch;
