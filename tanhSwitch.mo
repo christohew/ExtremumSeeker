@@ -1,20 +1,17 @@
 function tanhSwitch
-  input  Real a "amplitude of the switch";
-  input  Real b "time duration of switch (-'ve for switching off, +'ve for switching on)"
-  input  Real c "offset for switch ";
   input  Real x;
-  input  Real t; "time to switch"
+  input  Real t_switch  "request time between switch on/off";
+  input  Real t_offset  "request time before triggering switch";
+  input  Real switchVal "amplitude of the switch signal";
   output Real y;
+
+protected
+         Real t_a := 5.29236488e+00 "";
+         Real t_b := 1.94567629e-05 "";
+         Real t_c := 5.28177726e-05 "";
+         Real b "";
+         t_switch := t_a/(b-t_b) + t_c
+
 algorithm
-  y = (a/2)*(1+Modelica.Math.tanh((10/(t-1))*x+c/b));
+  y = (switchVal/2)*(1+Modelica.Math.tanh(b*x+t_offset/b)) + (switchVal/2);
 end tanhSwitch;
-
-0.5 5.5
-1   3
-2   1.5
-3   1
-5   0.5
-10  0.2
-
-
-b = 10/(t-1)
