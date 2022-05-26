@@ -2,7 +2,7 @@ within UUV;
 
 model SuperSimpleExampleModelWithMass
   
-  parameter Real    rho              =1.0;
+  parameter Real    rho              =1000;
   parameter Real    A                =1.0;
   parameter Real    C                =1.0;
   parameter Real    eff_prop         =0.5;
@@ -10,8 +10,8 @@ model SuperSimpleExampleModelWithMass
   parameter Real    fuelEnergyDensity=1000;
   parameter Real    fuelFill         =1000;
   parameter Real    mass             =36.0;
-  parameter Real    controlKP        =1.0;
-  parameter Real    controlKI        =1.0;
+  parameter Real    controlKP        =10.0;
+  parameter Real    controlKI        =100.0;
   
             Integer propulsionStatus(start=1,fixed=true);
   
@@ -29,14 +29,14 @@ model SuperSimpleExampleModelWithMass
             Real    travel(start=0.0,fixed=true);  
 
 equation
-  if (speedFluid >= speedFluidDemand) then
-    propulsionForce                    = tanhSwitch(1.0, -1.0, 0.0, controlKP*(speedFluidDemand-speedFluid)+controlKI*x);
-    der(x)                             = 0.0;
-  else
-    der(x)                             = (speedFluidDemand-speedFluid);
-    propulsionForce                    = controlKP*(speedFluidDemand-speedFluid)+controlKI*x;
-  end if;
-  
+//  if speedFluid > speedFluidDemand then
+//    controlKI = 0.1;
+//  else
+//    controlKI = 1.0;
+//  end if;
+  propulsionForce = tanhSwitch(1.0, 0.0, controlKP*(speedFluidDemand-speedFluid)+controlKI*x, 100*(speedFluidDemand-speedFluid)); //scaling the trigger reduces the effect of tanhSwitch when controller is approaching speedFluidDemand
+  der(x) = (speedFluidDemand-speedFluid);
+
   der(speedFluid)*mass                 = propulsionForce-dragForce;
   der(travel)                          = speedFluid*propulsionStatus;
   eff_prop*powerDemandProp             = speedFluid*propulsionForce;
@@ -47,7 +47,7 @@ equation
   when(fuel<=0.0) then
     propulsionStatus = 0;
   end when;
-  //powerDemandFixed = 10.0;
+  
   if(travel > 2000 and travel < 2500) then
     powerDemandFixed = 100.0;
   else
